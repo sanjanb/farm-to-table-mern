@@ -1,18 +1,17 @@
 import React, { useState } from 'react';
-import { Form, Button } from 'react-bootstrap';
-import { useParams } from 'react-router-dom';
-import { useNavigate } from 'react-router-dom';
+import { Form, Button, InputGroup } from 'react-bootstrap';
+import { useParams, useNavigate } from 'react-router-dom';
 
 const SearchBox = () => {
   const navigate = useNavigate();
   const { keyword: urlKeyword } = useParams();
 
-  // FIX: uncontrolled input - urlKeyword may be undefined
   const [keyword, setKeyword] = useState(urlKeyword || '');
+  const [isExpanded, setIsExpanded] = useState(false); // State to handle expansion
 
   const submitHandler = (e) => {
     e.preventDefault();
-    if (keyword) {
+    if (keyword.trim()) {
       navigate(`/search/${keyword.trim()}`);
       setKeyword('');
     } else {
@@ -22,17 +21,21 @@ const SearchBox = () => {
 
   return (
     <Form onSubmit={submitHandler} className='d-flex'>
-      <Form.Control
-        type='text'
-        name='q'
-        onChange={(e) => setKeyword(e.target.value)}
-        value={keyword}
-        placeholder='Search Products...'
-        className='mr-sm-2 ml-sm-5'
-      ></Form.Control>
-      <Button type='submit' variant='outline-success' className='p-2 mx-2'>
-        Search
-      </Button>
+      <InputGroup
+        className={`${isExpanded ? 'w-100' : 'w-50'}`}
+        onFocus={() => setIsExpanded(true)}
+        onBlur={() => !keyword && setIsExpanded(false)}
+      >
+        <Form.Control
+          type='text'
+          placeholder='Search Products...'
+          value={keyword}
+          onChange={(e) => setKeyword(e.target.value)}
+        />
+        <Button type='submit' variant='outline-light'>
+          Search
+        </Button>
+      </InputGroup>
     </Form>
   );
 };
