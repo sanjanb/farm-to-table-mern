@@ -5,7 +5,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useLogoutMutation } from '../slices/usersApiSlice';
 import { logout } from '../slices/authSlice';
 import SearchBox from './SearchBox';
-import logo from '../assets/logo.png'; // Replace this with Farm-to-Table logo
+import logo from '../assets/logo.png';
 import { resetCart } from '../slices/cartSlice';
 
 const Header = () => {
@@ -21,7 +21,7 @@ const Header = () => {
     try {
       await logoutApiCall().unwrap();
       dispatch(logout());
-      dispatch(resetCart()); // Reset cart on logout
+      dispatch(resetCart());
       navigate('/login');
     } catch (err) {
       console.error(err);
@@ -34,14 +34,14 @@ const Header = () => {
         <Container>
           <Navbar.Brand as={Link} to='/'>
             <img src={logo} alt='Farm To Table' style={{ height: '40px' }} />
-            Farm To Table {/* Updated branding */}
+            Farm To Table
           </Navbar.Brand>
           <Navbar.Toggle aria-controls='basic-navbar-nav' />
           <Navbar.Collapse id='basic-navbar-nav'>
             <Nav className='ms-auto'>
+              {/* Integrated SearchBox with expandable functionality */}
               <SearchBox />
 
-              {/* Cart icon and badge for buyers */}
               <Nav.Link as={Link} to='/cart'>
                 <FaShoppingCart /> Cart
                 {cartItems.length > 0 && (
@@ -51,7 +51,6 @@ const Header = () => {
                 )}
               </Nav.Link>
 
-              {/* User authenticated */}
               {userInfo ? (
                 <>
                   <NavDropdown title={userInfo.name} id='username'>
@@ -69,26 +68,6 @@ const Header = () => {
                 </Nav.Link>
               )}
 
-              {/* Farmer-specific navigation */}
-              {userInfo && userInfo.role === 'farmer' && (
-                <NavDropdown title='Farmer Panel' id='farmermenu'>
-                  <NavDropdown.Item as={Link} to='/farmer/products'>
-                    Manage Products
-                  </NavDropdown.Item>
-                  <NavDropdown.Item as={Link} to='/farmer/add-product'>
-                    Add Product
-                  </NavDropdown.Item>
-                </NavDropdown>
-              )}
-
-              {/* Buyer-specific navigation */}
-              {userInfo && userInfo.role === 'buyer' && (
-                <Nav.Link as={Link} to='/orders'>
-                  My Orders
-                </Nav.Link>
-              )}
-
-              {/* Admin links */}
               {userInfo && userInfo.isAdmin && (
                 <NavDropdown title='Admin' id='adminmenu'>
                   <NavDropdown.Item as={Link} to='/admin/productlist'>
