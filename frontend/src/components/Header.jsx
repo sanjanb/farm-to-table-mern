@@ -5,7 +5,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useLogoutMutation } from '../slices/usersApiSlice';
 import { logout } from '../slices/authSlice';
 import SearchBox from './SearchBox';
-import logo from '../assets/logo.png';
+import logo from '../assets/logo.png'; // Replace this with Farm-to-Table logo
 import { resetCart } from '../slices/cartSlice';
 
 const Header = () => {
@@ -21,9 +21,7 @@ const Header = () => {
     try {
       await logoutApiCall().unwrap();
       dispatch(logout());
-      // NOTE: here we need to reset cart state for when a user logs out so the next
-      // user doesn't inherit the previous users cart and shipping
-      dispatch(resetCart());
+      dispatch(resetCart()); // Reset cart on logout
       navigate('/login');
     } catch (err) {
       console.error(err);
@@ -32,16 +30,18 @@ const Header = () => {
 
   return (
     <header>
-      <Navbar bg='primary' variant='dark' expand='lg' collapseOnSelect>
+      <Navbar bg='success' variant='dark' expand='lg' collapseOnSelect>
         <Container>
           <Navbar.Brand as={Link} to='/'>
-            <img src={logo} alt='ProShop' />
-            FarmToTable
+            <img src={logo} alt='Farm To Table' style={{ height: '40px' }} />
+            Farm To Table {/* Updated branding */}
           </Navbar.Brand>
           <Navbar.Toggle aria-controls='basic-navbar-nav' />
           <Navbar.Collapse id='basic-navbar-nav'>
             <Nav className='ms-auto'>
               <SearchBox />
+
+              {/* Cart icon and badge for buyers */}
               <Nav.Link as={Link} to='/cart'>
                 <FaShoppingCart /> Cart
                 {cartItems.length > 0 && (
@@ -50,6 +50,8 @@ const Header = () => {
                   </Badge>
                 )}
               </Nav.Link>
+
+              {/* User authenticated */}
               {userInfo ? (
                 <>
                   <NavDropdown title={userInfo.name} id='username'>
@@ -67,7 +69,26 @@ const Header = () => {
                 </Nav.Link>
               )}
 
-              {/* Admin Links */}
+              {/* Farmer-specific navigation */}
+              {userInfo && userInfo.role === 'farmer' && (
+                <NavDropdown title='Farmer Panel' id='farmermenu'>
+                  <NavDropdown.Item as={Link} to='/farmer/products'>
+                    Manage Products
+                  </NavDropdown.Item>
+                  <NavDropdown.Item as={Link} to='/farmer/add-product'>
+                    Add Product
+                  </NavDropdown.Item>
+                </NavDropdown>
+              )}
+
+              {/* Buyer-specific navigation */}
+              {userInfo && userInfo.role === 'buyer' && (
+                <Nav.Link as={Link} to='/orders'>
+                  My Orders
+                </Nav.Link>
+              )}
+
+              {/* Admin links */}
               {userInfo && userInfo.isAdmin && (
                 <NavDropdown title='Admin' id='adminmenu'>
                   <NavDropdown.Item as={Link} to='/admin/productlist'>
