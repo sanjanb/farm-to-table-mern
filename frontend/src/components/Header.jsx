@@ -38,10 +38,10 @@ const Header = () => {
           </Navbar.Brand>
           <Navbar.Toggle aria-controls='basic-navbar-nav' />
           <Navbar.Collapse id='basic-navbar-nav'>
-            <Nav className='ms-auto'>
-              {/* Integrated SearchBox with expandable functionality */}
-              <SearchBox />
-
+            <Nav className='ms-auto d-flex align-items-center'>
+              {/* SearchBox Integrated */}
+              <SearchBox />{' '}
+              {/* Ensure it aligns and works responsively with other nav items */}
               <Nav.Link as={Link} to='/cart'>
                 <FaShoppingCart /> Cart
                 {cartItems.length > 0 && (
@@ -50,24 +50,21 @@ const Header = () => {
                   </Badge>
                 )}
               </Nav.Link>
-
               {userInfo ? (
-                <>
-                  <NavDropdown title={userInfo.name} id='username'>
-                    <NavDropdown.Item as={Link} to='/profile'>
-                      Profile
-                    </NavDropdown.Item>
-                    <NavDropdown.Item onClick={logoutHandler}>
-                      Logout
-                    </NavDropdown.Item>
-                  </NavDropdown>
-                </>
+                <NavDropdown title={userInfo.name} id='username'>
+                  <NavDropdown.Item as={Link} to='/profile'>
+                    Profile
+                  </NavDropdown.Item>
+                  <NavDropdown.Item onClick={logoutHandler}>
+                    Logout
+                  </NavDropdown.Item>
+                </NavDropdown>
               ) : (
                 <Nav.Link as={Link} to='/login'>
                   <FaUser /> Sign In
                 </Nav.Link>
               )}
-
+              {/* Admin Links */}
               {userInfo && userInfo.isAdmin && (
                 <NavDropdown title='Admin' id='adminmenu'>
                   <NavDropdown.Item as={Link} to='/admin/productlist'>
